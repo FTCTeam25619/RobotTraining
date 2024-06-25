@@ -19,7 +19,7 @@ public class ExampleSubsystem extends SubsystemBase {
     public ExampleSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
 
-        motor = new Motor(hardwareMap, "left_drive");
+        motor = new Motor(hardwareMap, "test_motor");
         motor.setRunMode(Motor.RunMode.RawPower);
 
         colorSensor = new SensorColor(hardwareMap, "sensor_color");

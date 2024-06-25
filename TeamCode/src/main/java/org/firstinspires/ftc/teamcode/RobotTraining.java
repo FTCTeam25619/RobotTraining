@@ -8,8 +8,13 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.commands.DriveForward;
+import org.firstinspires.ftc.teamcode.commands.DriveReverse;
 import org.firstinspires.ftc.teamcode.commands.ExampleComplexDriveCommand;
 import org.firstinspires.ftc.teamcode.commands.ExampleDriveMotorCommand;
+import org.firstinspires.ftc.teamcode.commands.RotateLeft;
+import org.firstinspires.ftc.teamcode.commands.RotateRight;
+import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.ExampleSubsystem;
 
 /* To connect to the Control Hub device via Wi-Fi:
@@ -23,6 +28,7 @@ import org.firstinspires.ftc.teamcode.subsystems.ExampleSubsystem;
 public class RobotTraining extends Robot {
     // Subsystems
     private final ExampleSubsystem exampleSubsystem;
+    private final Drivetrain drivetrain;
 
     // Controllers
     private final GamepadEx controller1;
@@ -32,6 +38,10 @@ public class RobotTraining extends Robot {
     private GamepadButton controller1A;
     private GamepadButton controller1DPadUp;
     private GamepadButton controller1DPadDown;
+    private GamepadButton controller1DPadLeft;
+    private GamepadButton controller1DPadRight;
+    private GamepadButton controller1B;
+    private GamepadButton controller1Y;
 
     public static Telemetry telemetry;
 
@@ -41,6 +51,7 @@ public class RobotTraining extends Robot {
 
         // Subsystems
         exampleSubsystem = new ExampleSubsystem(hardwareMap, RobotTraining.telemetry);
+        drivetrain = new Drivetrain(hardwareMap, RobotTraining.telemetry);
 
         // Controllers
         controller1 = new GamepadEx(gamepad1);
@@ -56,17 +67,33 @@ public class RobotTraining extends Robot {
         controller1A = new GamepadButton(controller1, GamepadKeys.Button.A);
         controller1DPadUp = new GamepadButton(controller1, GamepadKeys.Button.DPAD_UP);
         controller1DPadDown = new GamepadButton(controller1, GamepadKeys.Button.DPAD_DOWN);
+        controller1DPadLeft = new GamepadButton(controller1, GamepadKeys.Button.DPAD_LEFT);
+        controller1DPadRight = new GamepadButton(controller1, GamepadKeys.Button.DPAD_RIGHT);
+        controller1B = new GamepadButton(controller1, GamepadKeys.Button.B);
+        controller1Y = new GamepadButton(controller1, GamepadKeys.Button.Y);
     }
 
     private void configureButtonMappings() {
         controller1A.whenHeld(
                 new ExampleComplexDriveCommand(exampleSubsystem, RobotTraining.telemetry)
         );
-        controller1DPadUp.whenHeld(
+        controller1B.whenHeld(
                 new ExampleDriveMotorCommand(exampleSubsystem, 0.5)
         );
-        controller1DPadDown.whenHeld(
+        controller1Y.whenHeld(
                 new ExampleDriveMotorCommand(exampleSubsystem, -0.5)
+        );
+        controller1DPadUp.whenHeld(
+                new DriveForward(drivetrain)
+        );
+        controller1DPadDown.whenHeld(
+                new DriveReverse(drivetrain)
+        );
+        controller1DPadLeft.whenHeld(
+                new RotateLeft(drivetrain)
+        );
+        controller1DPadRight.whenHeld(
+                new RotateRight(drivetrain)
         );
     }
 }
