@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.commands.DriveForward;
 import org.firstinspires.ftc.teamcode.commands.DriveReverse;
+import org.firstinspires.ftc.teamcode.commands.DriveSticks;
 import org.firstinspires.ftc.teamcode.commands.ExampleComplexDriveCommand;
 import org.firstinspires.ftc.teamcode.commands.ExampleDriveMotorCommand;
 import org.firstinspires.ftc.teamcode.commands.RotateLeft;
@@ -49,13 +50,16 @@ public class RobotTraining extends Robot {
         // Setup Telemetry
         RobotTraining.telemetry = telemetry;
 
-        // Subsystems
-        exampleSubsystem = new ExampleSubsystem(hardwareMap, RobotTraining.telemetry);
-        drivetrain = new Drivetrain(hardwareMap, RobotTraining.telemetry);
-
         // Controllers
         controller1 = new GamepadEx(gamepad1);
         controller2 = new GamepadEx(gamepad2);
+
+        // Subsystems
+        exampleSubsystem = new ExampleSubsystem(hardwareMap, RobotTraining.telemetry);
+        drivetrain = new Drivetrain(hardwareMap,controller1, RobotTraining.telemetry);
+        drivetrain.setDefaultCommand(new DriveSticks(drivetrain, controller1, RobotTraining.telemetry));
+
+
 
         setupControllerButtons();
         configureButtonMappings();
