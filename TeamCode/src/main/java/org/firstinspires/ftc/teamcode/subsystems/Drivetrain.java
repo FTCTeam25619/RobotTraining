@@ -3,13 +3,18 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Constants;
+import org.firstinspires.ftc.teamcode.lib.RevIMU;
 
 public class Drivetrain extends SubsystemBase {
     private Motor leftDrive;
     private Motor rightDrive;
+
+    private RevIMU gyro;
 
     private Telemetry mTelemetry;
     private GamepadEx driveController;
@@ -21,12 +26,16 @@ public class Drivetrain extends SubsystemBase {
     public Drivetrain(HardwareMap hardwareMap, GamepadEx controller1 , Telemetry telemetry) {
         leftDrive = new Motor(hardwareMap, "left_drive");
         rightDrive = new Motor(hardwareMap, "right_drive");
+        gyro = new RevIMU(hardwareMap);
+
+        gyro.init();
 
         leftDrive.setInverted(false);
         rightDrive.setInverted(true);
-
-        leftDrive.setRunMode(Motor.RunMode.RawPower);
-        rightDrive.setRunMode(Motor.RunMode.RawPower);
+        leftDrive.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightDrive.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftDrive.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightDrive.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         mTelemetry = telemetry;
         driveController=controller1;
@@ -35,9 +44,25 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
+        mTelemetry.addData("Left Drive Pos", leftDrive.getCurrentPosition());
+        mTelemetry.addData("Right Drive Pos", rightDrive.getCurrentPosition());
+        mTelemetry.addData("Left Drive Revs", getRevolutions(leftDrive));
+        mTelemetry.addData("Right Drive Revs", getRevolutions(rightDrive));
+        mTelemetry.addData("Left Drive Distance", getDistanceInches(leftDrive));
+        mTelemetry.addData("Right Drive Distance", getDistanceInches(rightDrive));
+        mTelemetry.addData("Gyro Absolute Heading", gyro.getAbsoluteHeading());
+        mTelemetry.addData("Gyro Heading", gyro.getHeading());
+        mTelemetry.addData("Gyro Pitch", gyro.getPitch());
+        mTelemetry.addData("Gyro Roll", gyro.getRoll());
+
         if (isDriving) {
            // driveStraight (driveController.getLeftY());
-            drive(driveController.getLeftY(), driveController.getRightX());
+
+            double forward = driveController.getLeftY();
+            double rotate = driveController.getRightX();
+            forward = forward * forward * forward;
+            rotate = rotate * rotate * rotate;
+            drive(forward, rotate);
 
         }
     }
@@ -104,5 +129,13 @@ public class Drivetrain extends SubsystemBase {
     public void stopDrive() {
         leftDrive.set(0.0);
         rightDrive.set(0.0);
+    }
+
+    public double getRevolutions(Motor motor) {
+        return motor.getCurrentPosition() / Constants.motorOutPulsesPerRev;
+    }
+
+    public double getDistanceInches(Motor motor) {
+        return getRevolutions(motor) * Constants.driveWheelDiameterInches * Math.PI;
     }
 }

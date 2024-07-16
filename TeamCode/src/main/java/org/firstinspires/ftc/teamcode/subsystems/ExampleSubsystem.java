@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.Constants;
 
 public class ExampleSubsystem extends SubsystemBase {
     private final Motor motor;
@@ -15,6 +16,8 @@ public class ExampleSubsystem extends SubsystemBase {
     private final SensorRevTOFDistance distanceSensor;
 
     private final Telemetry telemetry;
+
+    private double revsFromPrevCycle = 0.0;
 
     public ExampleSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -35,7 +38,13 @@ public class ExampleSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         telemetry.addData("Distance Reading: ", distanceSensor.getDistance(DistanceUnit.CM));
-//        int[] argb = colorSensor.getARGB();
+        telemetry.addData("Motor Encoder Reading", motor.getCurrentPosition());
+        telemetry.addData("motor Revs", getRevolutions());
+        telemetry.addData("Previous Cycle Revs", getRevolutions() - revsFromPrevCycle);
+//        telemetry.addData("Revs Per Second", (getRevolutions() - revsFromPrevCycle) * 50);
+        revsFromPrevCycle = getRevolutions();
+
+        //        int[] argb = colorSensor.getARGB();
 //        telemetry.addData("Color ARGB Reading: ", "(" + argb[0] + "," + argb[1] + "," + argb[2] + "," + argb[3] + ")");
     }
 
@@ -48,5 +57,9 @@ public class ExampleSubsystem extends SubsystemBase {
         rawPower = Math.max(0.1, rawPower);
         rawPower = Math.min(1.0, rawPower);
         return rawPower;
+    }
+
+    public double getRevolutions() {
+        return motor.getCurrentPosition() / Constants.motorOutPulsesPerRev;
     }
 }
