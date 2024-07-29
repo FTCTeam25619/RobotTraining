@@ -18,7 +18,7 @@ public class RotateRight extends CommandBase {
 
     @Override
     public void execute() {
-        mSubsystem.rotateRight();
+        mSubsystem.rotateRight(0.5);
     }
 
     @Override

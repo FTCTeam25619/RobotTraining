@@ -18,7 +18,7 @@ public class DriveForward extends CommandBase {
 
     @Override
     public void execute() {
-        mSubsystem.driveForward();
+        mSubsystem.driveForward(0.5);
     }
 
     @Override

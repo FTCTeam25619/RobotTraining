@@ -82,7 +82,7 @@ public class Drivetrain extends SubsystemBase {
         rightDrive.set(forwardPower);
     }
 
-    private void drive(double forwardPower,double turnPower) {
+    public void drive(double forwardPower,double turnPower) {
        double leftPower=forwardPower+turnPower;
        double rightPower=forwardPower-turnPower;
        double maxPower=Math.abs(forwardPower)+Math.abs(turnPower);
@@ -98,32 +98,20 @@ public class Drivetrain extends SubsystemBase {
         rightDrive.set(rightPower);
     }
 
-    public void driveForward() {
-        mTelemetry.addData("L power", 0.5);
-        mTelemetry.addData("R power", 0.5);
-        leftDrive.set(0.5);
-        rightDrive.set(0.5);
+    public void driveForward(double power) {
+        drive(power,0.0);
     }
 
-    public void driveReverse() {
-        mTelemetry.addData("L power", -0.5);
-        mTelemetry.addData("R power", -0.5);
-        leftDrive.set(-0.5);
-        rightDrive.set(-0.5);
+    public void driveReverse(double power) {
+        drive(-power,0.0);
     }
 
-    public void rotateLeft() {
-        mTelemetry.addData("L power", -0.5);
-        mTelemetry.addData("R power", 0.5);
-        leftDrive.set(-0.5);
-        rightDrive.set(0.5);
+    public void rotateLeft(double power) {
+        drive(0.0,-power);
     }
 
-    public void rotateRight() {
-        mTelemetry.addData("L power", 0.5);
-        mTelemetry.addData("R power", -0.5);
-        leftDrive.set(0.5);
-        rightDrive.set(-0.5);
+    public void rotateRight(double power) {
+        drive(0.0,power);
     }
 
     public void stopDrive() {
@@ -131,11 +119,15 @@ public class Drivetrain extends SubsystemBase {
         rightDrive.set(0.0);
     }
 
-    public double getRevolutions(Motor motor) {
+    public double getCurrentDistanceInches() {
+        return getDistanceInches(leftDrive);
+    }
+
+    private double getRevolutions(Motor motor) {
         return motor.getCurrentPosition() / Constants.motorOutPulsesPerRev;
     }
 
-    public double getDistanceInches(Motor motor) {
+    private double getDistanceInches(Motor motor) {
         return getRevolutions(motor) * Constants.driveWheelDiameterInches * Math.PI;
     }
 }

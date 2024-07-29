@@ -18,7 +18,7 @@ public class DriveReverse extends CommandBase {
 
     @Override
     public void execute() {
-        mSubsystem.driveReverse();
+        mSubsystem.driveReverse(0.5);
     }
 
     @Override
